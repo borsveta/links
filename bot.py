@@ -10,18 +10,23 @@ user_links = {}  # Словарь для хранения выданных сс�
 def get_next_link():
     with open(LINKS_FILE, "r") as f:
         links = f.readlines()
+
     if not links:
         return None
+
     next_link = links[0].strip()
     remaining = links[1:]
+
     with open(LINKS_FILE, "w") as f:
         f.writelines(remaining)
+
     return next_link
 
 @bot.message_handler(commands=['start'])
 def handle_start(message):
     chat_id = message.chat.id
-    # Если пользователю уже выдана ссылка, повторно её отправляем
+
+    # Если пользователю уже выдана ссылка — отправляем ту же
     if chat_id in user_links:
         bot.send_message(chat_id, f"Вот ваша ссылка для доступа к курсу:\n{user_links[chat_id]}")
     else:
@@ -32,7 +37,21 @@ def handle_start(message):
         else:
             bot.send_message(chat_id, "Извините, ссылки закончились.")
 
-# Опционально: команда для просмотра количества оставшихся ссылок
+# Новая команда, чтобы получить новую ссылку (если старая истекла или неактуальна)
+@bot.message_handler(commands=['newlink'])
+def handle_newlink(message):
+    chat_id = message.chat.id
+    # Удаляем старую ссылку, если она уже была выдана
+    if chat_id in user_links:
+        del user_links[chat_id]
+    link = get_next_link()
+    if link:
+        user_links[chat_id] = link
+        bot.send_message(chat_id, f"Вот ваша новая ссылка для доступа к курсу:\n{link}")
+    else:
+        bot.send_message(chat_id, "Извините, ссылки закончились.")
+
+# Команда /stats для отслеживания количества оставшихся ссылок
 @bot.message_handler(commands=['stats'])
 def handle_stats(message):
     chat_id = message.chat.id
