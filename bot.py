@@ -46,5 +46,18 @@ def handle_start(message):
             "Например: http://t.me/linkmoro_bot?start=access2024"
         )
 
+# Обработчик команды /stats для получения количества оставшихся ссылок
+@bot.message_handler(commands=['stats'])
+def handle_stats(message):
+    chat_id = message.chat.id
+    try:
+        with open(LINKS_FILE, "r") as f:
+            links = f.readlines()
+        count = len(links)
+        bot.send_message(chat_id, f"Осталось ссылок: {count}")
+    except Exception as e:
+        bot.send_message(chat_id, f"Ошибка при чтении файла: {e}")
+
 print("✅ Бот успешно запущен и слушает сообщения...")
+
 bot.polling()
