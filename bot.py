@@ -1,7 +1,7 @@
 import telebot
 import os
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")  # Токен берется из переменной окружения
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 ACCESS_CODE = "access2024"
 LINKS_FILE = "links.txt"
 
@@ -28,10 +28,12 @@ def handle_start(message):
     if len(args) > 1 and args[1] == ACCESS_CODE:
         link = get_next_link()
         if link:
-            bot.send_message(message.chat.id, f"Вот твоя уникальная ссылка для доступа к курсу:\n{link}")
+            bot.send_message(message.chat.id, f"Вот твоя уникальная ссылка:\n{link}")
         else:
-            bot.send_message(message.chat.id, "Извините, ссылки закончились. Напишите нам для получения доступа.")
+            bot.send_message(message.chat.id, "Извините, ссылки закончились.")
     else:
-        bot.send_message(message.chat.id, "Привет! Для доступа к курсу используй специальную ссылку после оплаты.")
+        bot.send_message(message.chat.id, "Привет! Для доступа используй специальную ссылку после оплаты.")
+
+print("✅ Бот успешно запущен и слушает сообщения...")
 
 bot.polling()
